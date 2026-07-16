@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TOEIC Speaking 사전 테스트</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+  :root{
+    --ink:#14171F;
+    --ink-soft:#1F2430;
+    --paper:#F5F6F2;
+    --paper-raised:#FFFFFF;
+    --paper-dim:#E9EAE4;
+    --line:rgba(20,23,31,0.12);
+    --line-strong:rgba(20,23,31,0.28);
+    --text:#14171F;
+    --text-dim:#5B5F6B;
+    --text-faint:#8B8F99;
+    --teal:#0E9C97;
+    --teal-deep:#076B67;
+    --amber:#E8A33D;
+    --coral:#E2543A;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--text);
+    font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;}
+  #app{max-width:840px;margin:0 auto;padding:0 20px 80px;}
+
+  /* ---------- topbar ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 0 18px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:8px;
+  }
+  .brand{display:flex;align-items:baseline;gap:8px;cursor:pointer;}
+  .brand .b1{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:18px;letter-spacing:0.5px;color:var(--ink);}
+  .brand .b2{font-size:12px;color:var(--text-dim);font-weight:500;}
+  .infobtn{
+    background:none;border:1px solid var(--line-strong);color:var(--text-dim);
+    font-family:'IBM Plex Mono',monospace;font-size:11px;
+    border-radius:999px;padding:6px 12px;cursor:pointer;
+  }
+  .infobtn:hover{border-color:var(--ink);color:var(--ink);}
+
+  .infopanel{
+    display:none;background:var(--ink);color:#fff;border-radius:var(--radius);
+    padding:16px 18px;margin:14px 0 6px;font-size:13px;line-height:1.6;
+  }
+  .infopanel.show{display:block;}
+  .infopanel b{color:var(--amber);}
+
+  /* ---------- hero / home ---------- */
+  .hero{padding:38px 0 26px;}
+  .hero .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--teal-deep);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+  .hero h1{font-size:30px;line-height:1.35;margin:0 0 12px;font-weight:900;letter-spacing:-0.5px;}
+  .hero p{color:var(--text-dim);font-size:14.5px;line-height:1.7;margin:0;max-width:520px;}
+
+  .type-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px;}
+  @media(max-width:640px){.type-grid{grid-template-columns:1fr;}}
+
+  .type-card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 20px;cursor:pointer;text-align:left;position:relative;overflow:hidden;
+    transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .type-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,23,31,0.08);}
+  .type-card:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  .type-card .qnum{
+    font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:700;color:var(--paper-dim);
+    position:absolute;top:14px;right:16px;letter-spacing:-1px;
+  }
+  .type-card .ttl{font-size:17px;font-weight:700;margin:0 0 6px;}
+  .type-card .desc{font-size:13px;color:var(--text-dim);line-height:1.55;margin:0 0 16px;}
+  .type-card .go{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--teal-deep);display:flex;align-items:center;gap:6px;}
+  .type-card .go svg{transition:transform .15s ease;}
+  .type-card:hover .go svg{transform:translateX(3px);}
+
+  /* ---------- quiz screen ---------- */
+  .quiz-head{display:flex;align-items:center;justify-content:space-between;padding:26px 0 6px;}
+  .backlink{
+    background:none;border:none;color:var(--text-dim);font-size:13px;cursor:pointer;
+    display:flex;align-items:center;gap:6px;padding:0;font-family:'Noto Sans KR',sans-serif;
+  }
+  .backlink:hover{color:var(--ink);}
+  .quiz-tag{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--teal-deep);background:rgba(14,156,151,0.09);padding:5px 11px;border-radius:999px;}
+
+  .card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);
+    padding:24px 22px;margin-top:16px;
+  }
+
+  .photo-frame{
+    width:100%;aspect-ratio:3/2;border-radius:10px;overflow:hidden;background:var(--paper-dim);
+    display:flex;align-items:center;justify-content:center;margin-bottom:18px;
+  }
+  .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;}
+
+  .qtext{font-size:16px;line-height:1.65;font-weight:500;margin:0 0 4px;}
+  .qcontext{font-size:13px;color:var(--text-dim);margin:0 0 14px;line-height:1.6;}
+
+  table.infotable{width:100%;border-collapse:collapse;margin:14px 0 4px;font-size:13.5px;}
+  table.infotable caption{text-align:left;font-weight:700;font-size:14px;margin-bottom:8px;}
+  table.infotable th,table.infotable td{border:1px solid var(--line);padding:8px 10px;text-align:left;}
+  table.infotable th{background:var(--paper-dim);font-family:'IBM Plex Mono',monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:0.4px;}
+
+  textarea.answer{
+    width:100%;min-height:160px;border:1px solid var(--line-strong);border-radius:10px;
+    padding:14px;font-size:14.5px;line-height:1.65;font-family:'Noto Sans KR',sans-serif;
+    resize:vertical;margin-top:18px;background:var(--paper);
+  }
+  textarea.answer:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:transparent;}
+  .charcount{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);text-align:right;margin-top:6px;}
+
+  .btnrow{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .btn{
+    font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:14px;
+    padding:12px 20px;border-radius:10px;cursor:pointer;border:1px solid transparent;
+    transition:opacity .15s ease, transform .1s ease;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn.primary{background:var(--ink);color:#fff;}
+  .btn.primary:hover{opacity:0.85;}
+  .btn.primary:disabled{opacity:0.4;cursor:not-allowed;}
+  .btn.ghost{background:none;border:1px solid var(--line-strong);color:var(--text);}
+  .btn.ghost:hover{border-color:var(--ink);}
+
+  /* ---------- loading ---------- */
+  .loadwrap{display:flex;align-items:center;gap:10px;color:var(--text-dim);font-size:13.5px;padding:14px 0;}
+  .spinner{width:16px;height:16px;border:2px solid var(--paper-dim);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  @media(prefers-reduced-motion:reduce){.spinner{animation:none;border-top-color:var(--paper-dim);}}
+
+  .errbanner{background:#FBEAE6;border:1px solid rgba(226,84,58,0.35);color:#9C3420;border-radius:10px;padding:12px 14px;font-size:13px;margin-top:14px;line-height:1.55;}
+
+  /* ---------- result ---------- */
+  .scorehead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+  .scorenum{font-family:'IBM Plex Mono',monospace;font-size:42px;font-weight:700;line-height:1;}
+  .scorenum span{font-size:18px;color:var(--text-faint);font-weight:500;}
+  .band{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:5px 12px;border-radius:999px;font-weight:600;letter-spacing:0.3px;}
+  .band.low{background:#FBEAE6;color:#9C3420;}
+  .band.mid{background:#FBF2E1;color:#8A5E10;}
+  .band.high{background:rgba(14,156,151,0.12);color:var(--teal-deep);}
+
+  .meter{display:flex;gap:5px;margin:14px 0 6px;}
+  .meter .seg{flex:1;height:9px;border-radius:4px;background:var(--paper-dim);}
+  .meter .seg.filled.low{background:var(--coral);}
+  .meter .seg.filled.mid{background:var(--amber);}
+  .meter .seg.filled.high{background:var(--teal);}
+
+  .section-lbl{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.6px;text-transform:uppercase;color:var(--text-faint);margin:22px 0 10px;}
+  .flist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;}
+  .flist li{font-size:13.5px;line-height:1.6;padding-left:20px;position:relative;}
+  .flist li::before{content:'';position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:50%;}
+  .flist.strength li::before{background:var(--teal);}
+  .flist.improve li::before{background:var(--coral);}
+
+  .modelbox{background:var(--paper);border:1px dashed var(--line-strong);border-radius:10px;padding:16px;font-size:14px;line-height:1.75;margin-top:6px;}
+  .modelbox .pattern-note{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-faint);margin-bottom:8px;letter-spacing:0.3px;text-transform:uppercase;}
+
+  .patternbtn{
+    background:none;border:1px dashed var(--teal-deep);color:var(--teal-deep);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+    padding:9px 14px;border-radius:8px;cursor:pointer;margin-top:16px;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .patternbtn:hover{background:rgba(14,156,151,0.08);}
+  .patternbtn svg{transition:transform .15s ease;}
+  .patternbtn.open svg{transform:rotate(180deg);}
+
+  .patternbox{
+    background:rgba(14,156,151,0.06);border:1px solid rgba(14,156,151,0.25);
+    border-radius:10px;padding:16px 18px;margin-top:12px;
+  }
+  .patternbox .ptitle{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--teal-deep);margin-bottom:10px;}
+  .patternbox ol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:10px;}
+  .patternbox li{font-size:13.5px;line-height:1.6;}
+  .patternbox li .plabel{font-weight:700;color:var(--ink);}
+  .patternbox li .ptemplate{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--teal-deep);display:block;margin-top:3px;background:var(--paper-raised);padding:6px 9px;border-radius:6px;}
+  .patternbox .ptip{font-size:12px;color:var(--text-dim);margin-top:12px;line-height:1.6;border-top:1px dashed rgba(14,156,151,0.3);padding-top:10px;}
+
+  .youranswer{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.65;color:var(--text-dim);margin-top:8px;white-space:pre-wrap;}
+
+  .resultbtns{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;}
+
+  ::selection{background:rgba(14,156,151,0.25);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="brand" onclick="goHome()">
+      <span class="b1">TOEIC・SP</span><span class="b2">사전 테스트</span>
+    </div>
+    <button class="infobtn" onclick="toggleInfo()">AI 연동 안내</button>
+  </div>
+  <div class="infopanel" id="infopanel">
+    이 서비스는 Claude API로 문제를 생성하고 답변을 채점합니다. <b>Claude.ai 아티팩트 환경에서는 API 키 없이 자동으로 연동</b>되어 바로 동작합니다.
+    이 파일을 내려받아 외부 웹사이트로 배포할 경우에는 별도의 API 키 설정과 서버(프록시)가 필요해요 — 대화창 하단의 안내를 참고해주세요.
+  </div>
+  <div id="main"></div>
+</div>
+
+<script>
+const MODEL = 'claude-sonnet-4-6';
+// 로컬 프록시 서버 주소. server.js를 다른 포트로 띄웠다면 여기를 맞춰 바꿔주세요.
+// 배포된 서버와 같은 도메인에서 서빙되므로 상대경로를 사용한다. (모바일 등 어느 기기에서 접속해도 그대로 동작)
+const API_BASE = '';
+
+const TYPES = {
+  photo:  { qnum:'Q1–2', title:'사진 묘사', desc:'화면의 사진을 보고 상황과 사물을 자유롭게 묘사하는 연습입니다.', max:3 },
+  listen: { qnum:'Q3–5', title:'듣고 질문에 답하기', desc:'짧은 상황과 질문을 읽고, 요청받은 정보를 답변으로 구성하는 연습입니다.', max:3 },
+  table:  { qnum:'Q7–9', title:'제공된 정보를 사용하여 질문에 답하기', desc:'일정표·안내문 등 주어진 정보를 바탕으로 질문에 답하는 연습입니다.', max:3 },
+  opinion:{ qnum:'Q11',  title:'의견 제시하기', desc:'주제에 대한 자신의 의견과 근거를 구성해 답변하는 연습입니다.', max:5 },
+};
+
+// 유형별 영작 힌트 패턴 (사진 묘사는 해커스어학원 파트2 템플릿 예시를 참고해 구성)
+const PATTERNS = {
+  photo: {
+    tip: '준비 시간엔 문장을 완성하지 말고 동작·소지품 단어부터 나열하세요. 실제 답변은 6~7개의 짧은 문장(15초 분량)이면 충분해요 — 관계절이나 추측 표현 없이 단문으로만 말하세요.',
+    steps: [
+      { label:'① 장소 소개', template:'This picture was taken at/in a [장소].' },
+      { label:'② 인물1 동작 (2가지)', template:'I see a/an [인물1] [동작1]-ing and [동작2]-ing.' },
+      { label:'③ 인물2 동작', template:'The [인물2] is [동작]-ing [사물].' },
+      { label:'④ 배경', template:'In the background, [배경 요소 / 다른 인물의 동작].' },
+      { label:'⑤ 총평 마무리', template:'Everything in this picture looks [형용사].' },
+    ]
+  },
+  listen: {
+    tip: '질문이 두 개 이상 겹쳐 나올 수 있어요. 질문 순서대로 하나씩 빠짐없이 답하는 게 중요해요.',
+    steps: [
+      { label:'① 직접 답변', template:'Well, I usually/normally + [답변].' },
+      { label:'② 구체적 정보 추가', template:'For example, [구체적인 시간/장소/방법].' },
+      { label:'③ 이유나 마무리', template:"That's why I [행동/생각]. / So, I think [마무리]." },
+    ]
+  },
+  table: {
+    tip: '표에 있는 숫자·시간·이름을 정확히 옮기는 게 핵심이에요. 없는 정보를 지어내지 마세요.',
+    steps: [
+      { label:'① 정보 확인 언급', template:'According to the [schedule/information], ...' },
+      { label:'② 표의 구체적 정보 전달', template:'It says that [항목] is/will be at [시간/장소].' },
+      { label:'③ 안내나 변경사항 마무리', template:"So you can [행동]. / I'm afraid that [변경/주의사항]." },
+    ]
+  },
+  opinion: {
+    tip: '입장을 먼저 확실히 밝히고, 이유는 2개 정도로 구체적인 예시와 함께 드는 게 고득점 포인트예요.',
+    steps: [
+      { label:'① 입장 밝히기', template:'I (completely) agree/disagree that [주제].' },
+      { label:'② 이유 1', template:'First of all, [이유 1].' },
+      { label:'③ 이유 2 + 예시', template:'In addition, [이유 2]. For example, [구체적 예시].' },
+      { label:'④ 마무리', template:'For these reasons, I think [결론].' },
+    ]
+  },
+};
+
+let state = { screen:'home' };
+
+function toggleInfo(){
+  document.getElementById('infopanel').classList.toggle('show');
+}
+
+function el(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+
+function render(){
+  const main = document.getElementById('main');
+  main.innerHTML = '';
+  if(state.screen === 'home') main.appendChild(renderHome());
+  else if(state.screen === 'quiz') main.appendChild(renderQuiz());
+  else if(state.screen === 'result') main.appendChild(renderResult());
+}
+
+/* ---------------- HOME ---------------- */
+function renderHome(){
+  const wrap = el(`<div>
+    <div class="hero">
+      <div class="eyebrow">Pre-Test Practice</div>
+      <h1>말하기 전에, 텍스트로<br/>먼저 감을 잡아보세요.</h1>
+      <p>실제 TOEIC Speaking 문항 구성에 맞춰 유형별로 집중 연습합니다. 음성 답변 없이 텍스트로 작성하고, AI가 즉시 채점과 피드백, 모범 답안을 제시합니다.</p>
+    </div>
+    <div class="type-grid" id="typeGrid"></div>
+  </div>`);
+
+  const grid = wrap.querySelector('#typeGrid');
+  Object.entries(TYPES).forEach(([id, t])=>{
+    const card = el(`<button class="type-card" type="button">
+      <div class="qnum mono">${t.qnum}</div>
+      <div class="ttl">${t.title}</div>
+      <div class="desc">${t.desc}</div>
+      <div class="go">연습 시작
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M8 1L13 5L8 9M1 5H13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </button>`);
+    card.addEventListener('click', ()=>startType(id));
+    grid.appendChild(card);
+  });
+  return wrap;
+}
+
+function goHome(){ state = {screen:'home'}; render(); }
+
+/* ---------------- API HELPERS ---------------- */
+async function callClaude(content, maxTokens=1200){
+  const res = await fetch(`${API_BASE}/api/claude`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: maxTokens,
+      messages: [{ role:'user', content }]
+    })
+  });
+  if(!res.ok){
+    const errBody = await res.json().catch(()=>({}));
+    throw new Error(errBody.error || ('API 요청이 실패했습니다 (status ' + res.status + '). 로컬 서버(server.js)가 실행 중인지 확인해주세요.'));
+  }
+  const data = await res.json();
+  const text = (data.content || []).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+  return text;
+}
+
+function parseJSONSafe(text){
+  const cleaned = text.replace(/```json/g,'').replace(/```/g,'').trim();
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  const slice = (start>=0 && end>=0) ? cleaned.slice(start, end+1) : cleaned;
+  return JSON.parse(slice);
+}
+
+// JSON 응답이 형식 오류로 깨지는 경우를 대비해, 실패 시 한 번 자동 재시도
+async function generateJSON(promptText, maxTokens=800){
+  try{
+    const text = await callClaude([{ type:'text', text: promptText }], maxTokens);
+    return parseJSONSafe(text);
+  }catch(firstErr){
+    try{
+      const retryText = await callClaude([{ type:'text', text: promptText + '\n\n(주의: 이전 응답이 JSON 형식 오류로 실패했습니다. 문자열 값 안에는 줄바꿈이나 큰따옴표를 절대 넣지 말고, 오직 유효한 JSON 객체 하나만 출력하세요.)' }], maxTokens);
+      return parseJSONSafe(retryText);
+    }catch(secondErr){
+      throw new Error('문제를 불러오지 못했습니다. AI 응답 형식 오류가 반복되었습니다. (' + (secondErr.message || firstErr.message) + ')');
+    }
+  }
+}
+
+// 외부 이미지 서버 의존을 완전히 제거하기 위해, 묘사용 "사진"을 앱에 내장된 SVG 장면으로 대체한다.
+// 네트워크 요청이 전혀 없으므로 이미지 로드 실패가 발생하지 않는다.
+const PHOTO_SCENES = [
+  { id:'office', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+    <rect width="900" height="600" fill="#F5F6F2"/>
+    <rect x="0" y="0" width="900" height="360" fill="#EAF4F3"/>
+    <rect x="60" y="60" width="180" height="220" fill="#DCEDEB"/>
+    <rect x="660" y="60" width="180" height="220" fill="#DCEDEB"/>
+    <rect x="150" y="330" width="600" height="20" fill="#C9CBC2"/>
+    <ellipse cx="450" cy="420" rx="320" ry="60" fill="#FFFFFF" stroke="#C9CBC2" stroke-width="3"/>
+    <rect x="330" y="380" width="90" height="14" rx="3" fill="#14171F"/>
+    <rect x="480" y="380" width="90" height="14" rx="3" fill="#14171F"/>
+    <circle cx="260" cy="420" r="34" fill="#0E9C97"/>
+    <rect x="230" y="454" width="60" height="90" rx="18" fill="#076B67"/>
+    <circle cx="450" cy="400" r="34" fill="#E8A33D"/>
+    <rect x="420" y="434" width="60" height="90" rx="18" fill="#B87C1E"/>
+    <circle cx="640" cy="420" r="34" fill="#E2543A"/>
+    <rect x="610" y="454" width="60" height="90" rx="18" fill="#9C3420"/>
+    <circle cx="800" cy="90" r="24" fill="none" stroke="#5B5F6B" stroke-width="3"/>
+    <line x1="800" y1="90" x2="800" y2="74" stroke="#5B5F6B" stroke-width="3"/>
+    <line x1="800" y1="90" x2="812" y2="94" stroke="#5B5F6B" stroke-width="3"/>
+  </svg>` },
+  { id:'park', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+    <rect width="900" height="600" fill="#F5F6F2"/>
+    <rect x="0" y="0" width="900" height="380" fill="#E4F2E9"/>
+    <circle cx="770" cy="90" r="46" fill="#E8A33D"/>
+    <circle cx="150" cy="330" r="70" fill="#0E9C97" opacity="0.85"/>
+    <rect x="140" y="330" width="20" height="90" fill="#8A5E10"/>
+    <circle cx="720" cy="360" r="60" fill="#076B67" opacity="0.85"/>
+    <rect x="712" y="360" width="16" height="80" fill="#8A5E10"/>
+    <path d="M0 420 Q450 460 900 420 L900 600 L0 600 Z" fill="#DDE8DB"/>
+    <rect x="330" y="410" width="140" height="18" rx="4" fill="#B0824A"/>
+    <rect x="345" y="428" width="14" height="40" fill="#8A5E10"/>
+    <rect x="440" y="428" width="14" height="40" fill="#8A5E10"/>
+    <circle cx="520" cy="440" r="26" fill="#E2543A"/>
+    <rect x="497" y="466" width="46" height="70" rx="14" fill="#9C3420"/>
+    <circle cx="600" cy="460" r="24" fill="#0E9C97"/>
+    <rect x="579" y="484" width="42" height="64" rx="13" fill="#076B67"/>
+    <ellipse cx="640" cy="540" rx="26" ry="14" fill="#5B5F6B"/>
+  </svg>` },
+  { id:'kitchen', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+    <rect width="900" height="600" fill="#F5F6F2"/>
+    <rect x="0" y="0" width="900" height="300" fill="#FBF2E1"/>
+    <rect x="60" y="300" width="780" height="30" fill="#C9CBC2"/>
+    <rect x="80" y="330" width="220" height="180" fill="#EAF4F3"/>
+    <rect x="600" y="330" width="220" height="180" fill="#EAF4F3"/>
+    <rect x="360" y="150" width="180" height="150" fill="#E9EAE4" stroke="#C9CBC2" stroke-width="3"/>
+    <rect x="380" y="170" width="60" height="50" fill="#5B5F6B"/>
+    <rect x="460" y="170" width="60" height="50" fill="#5B5F6B"/>
+    <circle cx="180" cy="300" r="10" fill="#E2543A"/>
+    <circle cx="220" cy="300" r="10" fill="#E8A33D"/>
+    <circle cx="260" cy="300" r="10" fill="#0E9C97"/>
+    <circle cx="450" cy="420" r="30" fill="#E8A33D"/>
+    <rect x="422" y="450" width="56" height="86" rx="16" fill="#B87C1E"/>
+    <ellipse cx="450" cy="536" rx="40" ry="10" fill="#C9CBC2"/>
+    <path d="M700 330 q10 -40 40 -40 q30 0 40 40" fill="none" stroke="#5B5F6B" stroke-width="4"/>
+  </svg>` },
+  { id:'market', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+    <rect width="900" height="600" fill="#F5F6F2"/>
+    <rect x="0" y="0" width="900" height="340" fill="#FDF6EA"/>
+    <path d="M60 200 L840 200 L800 260 L100 260 Z" fill="#E2543A"/>
+    <path d="M100 260 L800 260 L800 320 L100 320 Z" fill="#F5F6F2" stroke="#C9CBC2" stroke-width="2"/>
+    <rect x="140" y="270" width="70" height="40" fill="#E8A33D"/>
+    <rect x="230" y="270" width="70" height="40" fill="#0E9C97"/>
+    <rect x="320" y="270" width="70" height="40" fill="#E2543A"/>
+    <rect x="410" y="270" width="70" height="40" fill="#076B67"/>
+    <rect x="500" y="270" width="70" height="40" fill="#B87C1E"/>
+    <rect x="590" y="270" width="70" height="40" fill="#9C3420"/>
+    <circle cx="330" cy="440" r="30" fill="#076B67"/>
+    <rect x="302" y="470" width="56" height="86" rx="16" fill="#0E9C97"/>
+    <circle cx="470" cy="460" r="28" fill="#9C3420"/>
+    <rect x="444" y="488" width="52" height="80" rx="15" fill="#E2543A"/>
+    <rect x="700" y="150" width="16" height="180" fill="#5B5F6B"/>
+    <rect x="660" y="120" width="96" height="34" rx="6" fill="#14171F"/>
+  </svg>` },
+  { id:'library', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+    <rect width="900" height="600" fill="#F5F6F2"/>
+    <rect x="0" y="0" width="900" height="380" fill="#EFEDE6"/>
+    <rect x="60" y="60" width="220" height="300" fill="#E9EAE4" stroke="#C9CBC2" stroke-width="3"/>
+    <rect x="80" y="80" width="60" height="70" fill="#0E9C97"/>
+    <rect x="150" y="80" width="50" height="70" fill="#E8A33D"/>
+    <rect x="210" y="80" width="55" height="70" fill="#E2543A"/>
+    <rect x="80" y="180" width="55" height="70" fill="#076B67"/>
+    <rect x="145" y="180" width="60" height="70" fill="#9C3420"/>
+    <rect x="215" y="180" width="50" height="70" fill="#B87C1E"/>
+    <rect x="620" y="60" width="220" height="300" fill="#E9EAE4" stroke="#C9CBC2" stroke-width="3"/>
+    <rect x="640" y="90" width="180" height="18" fill="#5B5F6B"/>
+    <rect x="640" y="150" width="180" height="18" fill="#5B5F6B"/>
+    <rect x="640" y="210" width="180" height="18" fill="#5B5F6B"/>
+    <rect x="330" y="380" width="240" height="16" fill="#C9CBC2"/>
+    <circle cx="450" cy="440" r="30" fill="#14171F"/>
+    <rect x="420" y="470" width="60" height="90" rx="18" fill="#5B5F6B"/>
+    <rect x="405" y="400" width="90" height="14" rx="3" fill="#FFFFFF"/>
+  </svg>` },
+  { id:'cafe', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+    <rect width="900" height="600" fill="#F5F6F2"/>
+    <rect x="0" y="0" width="900" height="360" fill="#FBEFE4"/>
+    <rect x="80" y="80" width="740" height="120" fill="#E9EAE4" stroke="#C9CBC2" stroke-width="3"/>
+    <rect x="120" y="110" width="60" height="60" fill="#B87C1E"/>
+    <rect x="200" y="110" width="60" height="60" fill="#E8A33D"/>
+    <rect x="280" y="110" width="60" height="60" fill="#9C3420"/>
+    <ellipse cx="300" cy="420" rx="110" ry="70" fill="#FFFFFF" stroke="#C9CBC2" stroke-width="3"/>
+    <circle cx="260" cy="400" r="28" fill="#E2543A"/>
+    <rect x="234" y="428" width="52" height="80" rx="15" fill="#9C3420"/>
+    <circle cx="360" cy="400" r="28" fill="#0E9C97"/>
+    <rect x="334" y="428" width="52" height="80" rx="15" fill="#076B67"/>
+    <ellipse cx="650" cy="440" rx="90" ry="56" fill="#FFFFFF" stroke="#C9CBC2" stroke-width="3"/>
+    <circle cx="650" cy="420" r="26" fill="#E8A33D"/>
+    <rect x="626" y="446" width="48" height="74" rx="14" fill="#B87C1E"/>
+    <rect x="600" y="150" width="40" height="50" fill="#5B5F6B"/>
+  </svg>` }
+];
+
+function loadRandomPhoto(){
+  return new Promise(async (resolve)=>{
+    // 1) 먼저 로컬 서버를 통해 Pixabay 실사 사진을 시도한다.
+    try{
+      const res = await fetch(`${API_BASE}/api/photo`);
+      if(res.ok){
+        const data = await res.json();
+        if(data.base64){
+          resolve({ url: `data:${data.mediaType};base64,${data.base64}`, base64: data.base64, mediaType: data.mediaType || 'image/jpeg', usable:true, source:'pixabay', credit: data.credit || '' });
+          return;
+        }
+      }
+    }catch(e){
+      // 로컬 서버 미실행 등 -> 아래 SVG 폴백으로 진행
+    }
+
+    // 2) 실패 시 내장 SVG 장면으로 대체 (앱이 항상 동작하도록 보장)
+    const scene = PHOTO_SCENES[Math.floor(Math.random()*PHOTO_SCENES.length)];
+    const svgDataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(scene.svg)));
+    const img = new Image();
+    img.onload = ()=>{
+      try{
+        const canvas = document.createElement('canvas');
+        canvas.width = 900; canvas.height = 600;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0,900,600);
+        ctx.drawImage(img, 0, 0, 900, 600);
+        const pngDataUrl = canvas.toDataURL('image/png');
+        resolve({ url: svgDataUrl, base64: pngDataUrl.split(',')[1], mediaType:'image/png', usable:true, source:'illustration' });
+      }catch(e){
+        resolve({ url: svgDataUrl, base64:null, mediaType:null, usable:false, source:'illustration' });
+      }
+    };
+    img.onerror = ()=>{
+      resolve({ url:null, base64:null, mediaType:null, usable:false, failed:true });
+    };
+    img.src = svgDataUrl;
+  });
+}
+
+/* ---------------- START TYPE (generate question) ---------------- */
+async function startType(typeId){
+  state = { screen:'quiz', typeId, loading:true, error:null, question:null, photo:null, answer:'', showPattern:false };
+  render();
+
+  try{
+    if(typeId === 'photo'){
+      const photo = await loadRandomPhoto();
+      if(photo.failed){
+        throw new Error('사진을 불러오지 못했습니다. 네트워크 상태를 확인하고 다시 시도해주세요.');
+      }
+      state.photo = photo;
+      state.question = { prompt:'화면에 제시된 사진을 최대한 자세히 묘사해보세요.' };
+    } else if(typeId === 'listen'){
+      state.question = await generateJSON(
+        `너는 TOEIC Speaking 시험 문항 출제자야. Q3-5 유형(짧은 상황을 듣고 질문에 답하기)에 해당하는, 일상적인 전화 문의나 설문조사 상황을 하나 만들어줘.
+JSON만 출력해. 다른 텍스트, 코드블록, 설명 없이 아래 형식 그대로 한 줄씩:
+{"context": "상황을 설명하는 한국어 한 문장", "question": "영어로 된 질문 한 문장"}
+주의사항: 반드시 유효한 JSON 하나만 출력. 문자열 값 안에는 줄바꿈을 넣지 말 것. 문자열 값 안에는 큰따옴표(")를 절대 사용하지 말 것 (필요하면 작은따옴표나 다른 표현으로 대체).`
+      );
+    } else if(typeId === 'table'){
+      state.question = await generateJSON(
+        `너는 TOEIC Speaking 시험 문항 출제자야. Q7-9 유형(제공된 정보를 활용해 질문에 답하기)에 맞는 간단한 일정표(회의 일정, 워크숍 스케줄, 매장 영업시간 등)를 하나 만들고, 그 표를 보고 답해야 하는 질문 1개를 만들어줘.
+JSON만 출력해. 다른 텍스트 없이 아래 형식 그대로:
+{"title": "표 제목", "columns": ["열1","열2","열3"], "rows": [["값","값","값"], ["값","값","값"], ["값","값","값"]], "context": "상황 설명 한국어 한 문장", "question": "영어로 된 질문 한 문장"}
+주의사항: 반드시 유효한 JSON 하나만 출력. 모든 문자열 값 안에는 줄바꿈이나 큰따옴표(")를 절대 사용하지 말 것.`
+      );
+    } else if(typeId === 'opinion'){
+      state.question = await generateJSON(
+        `너는 TOEIC Speaking 시험 문항 출제자야. Q11 유형(의견 제시하기)에 맞는, 찬반이 갈릴 수 있는 일반적인 주제의 영어 질문을 하나 만들어줘.
+JSON만 출력해. 다른 텍스트 없이 아래 형식 그대로:
+{"question": "영어로 된 의견 질문 한 문장 (Do you agree or disagree... / Which do you prefer... 형태)"}
+주의사항: 반드시 유효한 JSON 하나만 출력. 문자열 값 안에는 줄바꿈이나 큰따옴표(")를 절대 사용하지 말 것.`
+      );
+    }
+    state.loading = false;
+  }catch(e){
+    state.loading = false;
+    state.error = e.message || '문제를 불러오지 못했습니다.';
+  }
+  render();
+}
+
+/* ---------------- QUIZ SCREEN ---------------- */
+function renderQuiz(){
+  const t = TYPES[state.typeId];
+  const wrap = el(`<div>
+    <div class="quiz-head">
+      <button class="backlink" onclick="goHome()">
+        <svg width="12" height="10" viewBox="0 0 14 10" fill="none"><path d="M6 1L1 5L6 9M1 5H13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        유형 목록
+      </button>
+      <span class="quiz-tag mono">${t.qnum} · ${t.title}</span>
+    </div>
+    <div class="card" id="quizCard"></div>
+  </div>`);
+
+  const cardEl = wrap.querySelector('#quizCard');
+
+  if(state.loading){
+    cardEl.appendChild(el(`<div class="loadwrap"><div class="spinner"></div>AI가 문제를 준비하고 있어요…</div>`));
+    return wrap;
+  }
+  if(state.error){
+    cardEl.appendChild(el(`<div class="errbanner">${escapeHtml(state.error)}</div>`));
+    const retry = el(`<div class="btnrow"><button class="btn primary">다시 시도</button></div>`);
+    retry.querySelector('button').addEventListener('click', ()=>startType(state.typeId));
+    cardEl.appendChild(retry);
+    return wrap;
+  }
+
+  // question body per type
+  if(state.typeId === 'photo' && state.photo){
+    cardEl.appendChild(el(`<div class="photo-frame"><img src="${state.photo.url}" alt="묘사할 사진" /></div>`));
+    if(state.photo.source === 'pixabay'){
+      cardEl.appendChild(el(`<div class="charcount mono" style="text-align:left;margin-bottom:10px;">Photo via Pixabay</div>`));
+    }
+    cardEl.appendChild(el(`<div class="qtext">${state.question.prompt}</div>`));
+  } else if(state.typeId === 'listen'){
+    cardEl.appendChild(el(`<div class="qcontext">${escapeHtml(state.question.context||'')}</div>`));
+    cardEl.appendChild(el(`<div class="qtext">"${escapeHtml(state.question.question||'')}"</div>`));
+  } else if(state.typeId === 'table'){
+    cardEl.appendChild(el(`<div class="qcontext">${escapeHtml(state.question.context||'')}</div>`));
+    const cols = state.question.columns || [];
+    const rows = state.question.rows || [];
+    let tableHtml = `<table class="infotable"><caption>${escapeHtml(state.question.title||'')}</caption><thead><tr>${cols.map(c=>`<th>${escapeHtml(c)}</th>`).join('')}</tr></thead><tbody>`;
+    rows.forEach(r=>{ tableHtml += `<tr>${r.map(v=>`<td>${escapeHtml(String(v))}</td>`).join('')}</tr>`; });
+    tableHtml += `</tbody></table>`;
+    cardEl.appendChild(el(tableHtml));
+    cardEl.appendChild(el(`<div class="qtext" style="margin-top:14px;">"${escapeHtml(state.question.question||'')}"</div>`));
+  } else if(state.typeId === 'opinion'){
+    cardEl.appendChild(el(`<div class="qtext">"${escapeHtml(state.question.question||'')}"</div>`));
+  }
+
+  // 패턴 보기 토글 버튼
+  const pattern = PATTERNS[state.typeId];
+  const patBtn = el(`<button type="button" class="patternbtn${state.showPattern ? ' open' : ''}">
+    <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 1L5 6L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    ${state.showPattern ? '패턴 숨기기' : '패턴 보기 · 답변 힌트'}
+  </button>`);
+  patBtn.addEventListener('click', ()=>{ state.showPattern = !state.showPattern; render(); });
+  cardEl.appendChild(patBtn);
+
+  if(state.showPattern && pattern){
+    const box = el(`<div class="patternbox">
+      <div class="ptitle">답변 구성 패턴</div>
+      <ol id="patternSteps"></ol>
+      <div class="ptip">${escapeHtml(pattern.tip)}</div>
+    </div>`);
+    const ol = box.querySelector('#patternSteps');
+    pattern.steps.forEach(s=>{
+      ol.appendChild(el(`<li><span class="plabel">${escapeHtml(s.label)}</span><span class="ptemplate">${escapeHtml(s.template)}</span></li>`));
+    });
+    cardEl.appendChild(box);
+  }
+
+  const ta = el(`<textarea class="answer" placeholder="영어로 답변을 작성해주세요. (음성 답변은 지원하지 않습니다)"></textarea>`);
+  ta.value = state.answer || '';
+  ta.addEventListener('input', ()=>{ state.answer = ta.value; count.textContent = ta.value.length + '자'; });
+  cardEl.appendChild(ta);
+  const count = el(`<div class="charcount mono">0자</div>`);
+  cardEl.appendChild(count);
+
+  const btnrow = el(`<div class="btnrow">
+    <button class="btn primary" id="submitBtn">완료 · AI 분석 보기</button>
+    <button class="btn ghost" id="reloadBtn">다른 문제로</button>
+  </div>`);
+  btnrow.querySelector('#submitBtn').addEventListener('click', submitAnswer);
+  btnrow.querySelector('#reloadBtn').addEventListener('click', ()=>startType(state.typeId));
+  cardEl.appendChild(btnrow);
+
+  return wrap;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------------- SUBMIT / ANALYZE ---------------- */
+async function submitAnswer(){
+  if(!state.answer || !state.answer.trim()){
+    alert('답변을 작성한 후 완료를 눌러주세요.');
+    return;
+  }
+  const t = TYPES[state.typeId];
+  state.loading = true;
+  state.error = null;
+  render();
+  // show loading in-place
+  const main = document.getElementById('main');
+  main.appendChild(el(`<div class="loadwrap" style="padding:20px 0;"><div class="spinner"></div>AI가 답변을 분석하고 있어요…</div>`));
+
+  try{
+    let content;
+    let promptText;
+
+    if(state.typeId === 'photo'){
+      if(state.photo && state.photo.usable && state.photo.base64){
+        promptText = `너는 TOEIC Speaking 채점관이야. 첨부된 사진과 수험자의 영어 답변(사진 묘사)을 비교해서 채점해줘.
+평가 기준: 사진 내용과의 일치도, 문법, 어휘, 문장 구성력. 0~3점 척도로 채점해.
+
+모범 답안(modelAnswer)은 실제 시험에서 15초 안에 소리 내어 말할 수 있는 수준으로 아주 간결하게 작성해야 해. 아래 규칙을 반드시 지켜:
+- 전체 6~7개의 짧은 문장으로만 구성 (총 60단어 이내)
+- 한 문장은 최대 12단어 이내, 단문 위주 (관계대명사절, 분사구문, "likely", "which", "with ~ing" 같은 수식어·추측 표현 금지)
+- 반드시 아래 고정 패턴 순서를 그대로 따를 것:
+1) "This picture was taken at/in a [장소]." (장소 소개, 한 문장)
+2) "I see a/an [인물1] [동작1]-ing and [동작2]-ing." (중심 인물1의 동작 2개, 한 문장)
+3) "The [인물2] is [동작]-ing [사물]." (중심 인물2의 동작, 한 문장)
+4) "In the background, [배경 요소/다른 인물의 동작]." (배경, 한 문장)
+5) "Everything in this picture looks [형용사]." (총평, 한 문장)
+
+예시 톤(참고용, 그대로 베끼지 말고 이 사진 내용에 맞게 새로 작성):
+"This picture was taken at a flower shop. I see a woman standing behind the counter and assisting a customer. She is holding a barcode scanner and scanning a flower pot. The male customer is holding the flower pot and paying for his purchase. In the background, another man is working with some colorful supplies. Everything in this picture looks peaceful."
+
+수험자 답변: "${state.answer}"
+
+JSON만 출력해. 다른 텍스트 없이 아래 형식 그대로 (feedback은 한국어, modelAnswer는 영어):
+{"score": 0~3 사이 정수, "strengths": ["한국어 강점 문장", "..."], "improvements": ["한국어 개선점 문장", "..."], "modelAnswer": "위 규칙을 따른 6~7문장짜리 간결한 영어 모범 답안"}
+주의사항: 반드시 유효한 JSON 하나만 출력. 문자열 값 안에는 줄바꿈이나 큰따옴표(")를 절대 사용하지 말 것 (영어 문장 안에서 인용이 필요하면 작은따옴표 사용).`;
+
+        content = [
+          { type:'image', source:{ type:'base64', media_type: state.photo.mediaType, data: state.photo.base64 } },
+          { type:'text', text: promptText }
+        ];
+      } else {
+        // 사진 base64를 확보하지 못한 경우: 사진 없이 답변의 문법/구성만으로 채점 (사진 일치 여부는 평가하지 않음)
+        promptText = `너는 TOEIC Speaking 채점관이야. 지금은 사진 파일 자체에 접근할 수 없는 상황이라, 수험자의 영어 답변(사진 묘사 유형)을 문법, 어휘, 문장 구성력, 표현의 구체성만으로 채점해줘. 사진과의 내용 일치 여부는 평가 대상에서 제외해.
+0~3점 척도로 채점해.
+
+모범 답안(modelAnswer)은 특정 사진에 의존하지 않는 일반적인 예시로 작성하되, 15초 안에 말할 수 있는 수준으로 간결해야 해:
+- 전체 6~7개의 짧은 문장, 총 60단어 이내, 한 문장 최대 12단어
+- 관계대명사절/분사구문/추측 표현("likely", "which" 등) 금지, 단문 위주
+- 순서: 1) 장소 소개 2) 인물1 동작 2가지 3) 인물2 동작 4) 배경 요소 5) 총평 한 문장
+예시 톤: "This picture was taken at a flower shop. I see a woman standing behind the counter and assisting a customer. She is holding a barcode scanner and scanning a flower pot. The male customer is holding the flower pot and paying for his purchase. In the background, another man is working with some colorful supplies. Everything in this picture looks peaceful."
+
+수험자 답변: "${state.answer}"
+
+JSON만 출력해. 다른 텍스트 없이 아래 형식 그대로 (feedback은 한국어, modelAnswer는 영어):
+{"score": 0~3 사이 정수, "strengths": ["한국어 강점 문장", "..."], "improvements": ["한국어 개선점 문장", "..."], "modelAnswer": "위 규칙을 따른 6~7문장짜리 간결한 영어 모범 답안"}
+주의사항: 반드시 유효한 JSON 하나만 출력. 문자열 값 안에는 줄바꿈이나 큰따옴표(")를 절대 사용하지 말 것.`;
+
+        content = [{ type:'text', text: promptText }];
+      }
+    } else {
+      let qBlock = '';
+      if(state.typeId === 'listen'){
+        qBlock = `상황: ${state.question.context}\n질문: ${state.question.question}`;
+      } else if(state.typeId === 'table'){
+        qBlock = `상황: ${state.question.context}\n표 제목: ${state.question.title}\n표 데이터: ${JSON.stringify(state.question.rows)}\n질문: ${state.question.question}`;
+      } else if(state.typeId === 'opinion'){
+        qBlock = `질문: ${state.question.question}`;
+      }
+
+      promptText = `너는 TOEIC Speaking 채점관이야. ${t.title}(${t.qnum}) 유형 문제에 대한 수험자의 영어 답변을 채점해줘.
+${qBlock}
+
+수험자 답변: "${state.answer}"
+
+평가 기준: 질문에 대한 답변의 정확성/완결성, 문법, 어휘, 논리적 구성. 0~${t.max}점 척도로 채점해.
+JSON만 출력해. 다른 텍스트 없이 아래 형식 그대로 (feedback은 한국어, modelAnswer는 영어):
+{"score": 0~${t.max} 사이 정수, "strengths": ["한국어 강점 문장", "..."], "improvements": ["한국어 개선점 문장", "..."], "modelAnswer": "영어 모범 답안 (3~5문장)"}
+주의사항: 반드시 유효한 JSON 하나만 출력. 문자열 값 안에는 줄바꿈이나 큰따옴표(")를 절대 사용하지 말 것 (영어 문장 안에서 인용이 필요하면 작은따옴표 사용).`;
+
+      content = [{ type:'text', text: promptText }];
+    }
+
+    let result;
+    try{
+      const text = await callClaude(content, 1200);
+      result = parseJSONSafe(text);
+    }catch(firstErr){
+      const retryContent = content.map(b => b.type === 'text'
+        ? { ...b, text: b.text + '\n\n(주의: 이전 응답이 JSON 형식 오류로 실패했습니다. 문자열 값 안에는 줄바꿈이나 큰따옴표를 절대 넣지 말고, 오직 유효한 JSON 객체 하나만 출력하세요.)' }
+        : b);
+      const retryText = await callClaude(retryContent, 1200);
+      result = parseJSONSafe(retryText);
+    }
+    state = { screen:'result', typeId: state.typeId, question: state.question, photo: state.photo, answer: state.answer, result };
+  }catch(e){
+    state.loading = false;
+    state.error = e.message || '분석에 실패했습니다.';
+  }
+  render();
+}
+
+/* ---------------- RESULT SCREEN ---------------- */
+function renderResult(){
+  const t = TYPES[state.typeId];
+  const r = state.result;
+  const max = t.max;
+  const score = Math.max(0, Math.min(max, Number(r.score) || 0));
+  const ratio = score / max;
+  const bandClass = ratio < 0.4 ? 'low' : ratio < 0.75 ? 'mid' : 'high';
+  const bandLabel = ratio < 0.4 ? '미흡' : ratio < 0.75 ? '보통' : '우수';
+
+  const wrap = el(`<div>
+    <div class="quiz-head">
+      <button class="backlink" onclick="goHome()">
+        <svg width="12" height="10" viewBox="0 0 14 10" fill="none"><path d="M6 1L1 5L6 9M1 5H13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        유형 목록
+      </button>
+      <span class="quiz-tag mono">${t.qnum} · ${t.title}</span>
+    </div>
+    <div class="card">
+      <div class="scorehead">
+        <div class="scorenum">${score}<span> / ${max}</span></div>
+        <div class="band ${bandClass}">${bandLabel}</div>
+      </div>
+      <div class="meter" id="meter"></div>
+
+      <div class="section-lbl">내 답변</div>
+      <div class="youranswer">${escapeHtml(state.answer)}</div>
+
+      <div class="section-lbl">잘한 점</div>
+      <ul class="flist strength" id="strengthList"></ul>
+
+      <div class="section-lbl">개선할 점</div>
+      <ul class="flist improve" id="improveList"></ul>
+
+      <div class="section-lbl">모범 답안</div>
+      <div class="modelbox">
+        ${state.typeId==='photo' ? '<div class="pattern-note">고정 패턴 · 장소 → 인물1 동작 → 인물2 동작 → 배경 → 총평 (6~7문장, 15초 분량)</div>' : ''}
+        ${escapeHtml(r.modelAnswer || '')}
+      </div>
+
+      <div class="resultbtns">
+        <button class="btn primary" id="retryBtn">같은 유형 다른 문제</button>
+        <button class="btn ghost" onclick="goHome()">유형 목록으로</button>
+      </div>
+    </div>
+  </div>`);
+
+  const meter = wrap.querySelector('#meter');
+  for(let i=1;i<=max;i++){
+    const seg = el(`<div class="seg ${i<=score ? 'filled '+bandClass : ''}"></div>`);
+    meter.appendChild(seg);
+  }
+  const sList = wrap.querySelector('#strengthList');
+  (r.strengths||[]).forEach(s=> sList.appendChild(el(`<li>${escapeHtml(s)}</li>`)));
+  const iList = wrap.querySelector('#improveList');
+  (r.improvements||[]).forEach(s=> iList.appendChild(el(`<li>${escapeHtml(s)}</li>`)));
+
+  wrap.querySelector('#retryBtn').addEventListener('click', ()=>startType(state.typeId));
+
+  return wrap;
+}
+
+render();
+</script>
+</body>
+</html>
